@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>นักศึกษา Premium - Actihup</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Prompt', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            padding-bottom: 100px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 800;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .filter-bar {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .filter-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: 'Prompt', sans-serif;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .filter-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn-filter {
+            padding: 10px 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .btn-filter:hover {
+            background: #764ba2;
+        }
+
+        .profiles-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .profile-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            position: relative;
+        }
+
+        .profile-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-image-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 60px;
+        }
+
+        .profile-content {
+            padding: 20px;
+        }
+
+        .profile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .profile-name {
+            font-size: 22px;
+            font-weight: 800;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .profile-phone {
+            color: #667eea;
+            font-weight: 700;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .profile-phone a {
+            color: #667eea;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .profile-phone a:hover {
+            color: #764ba2;
+        }
+
+        .days-remaining {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 700;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .profile-skills {
+            margin-bottom: 15px;
+        }
+
+        .profile-skills h4 {
+            font-size: 12px;
+            color: #999;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .skill-tag {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .profile-details {
+            background: #f5f7ff;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: #555;
+            line-height: 1.6;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-call,
+        .btn-message {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-call {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 2px solid #4caf50;
+        }
+
+        .btn-call:hover {
+            background: #c8e6c9;
+        }
+
+        .btn-message {
+            background: #e3f2fd;
+            color: #1565c0;
+            border: 2px solid #2196f3;
+        }
+
+        .btn-message:hover {
+            background: #bbdefb;
+        }
+
+        .empty-state {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 20px;
+            text-align: center;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .empty-state-icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+
+        .empty-state h3 {
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .empty-state p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .loading {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 20px;
+            text-align: center;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .loading-spinner {
+            font-size: 50px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .navbar-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+            z-index: 1000;
+            font-family: 'Prompt', sans-serif;
+            box-sizing: border-box;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #555555;
+            font-size: 11px;
+            font-weight: 600;
+            flex: 1;
+            text-align: center;
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 2px;
+        }
+
+        .nav-item.active {
+            color: #667eea;
+        }
+
+        .nav-item.active .nav-icon {
+            background: #f0f4ff;
+            border-radius: 10px;
+            padding: 5px;
+        }
+
+        .page-info {
+            color: white;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⭐ นักศึกษา Premium</h1>
+            <p>ค้นหาความสามารถที่ต้องการ</p>
+        </div>
+
+        <div class="page-info" id="page-info">
+            กำลังโหลดข้อมูล...
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+            <input type="text" class="filter-input" id="search-input" placeholder="ค้นหาตามความสามารถ..." onkeyup="filterProfiles()">
+            <button class="btn-filter" onclick="filterProfiles()">🔍</button>
+        </div>
+
+        <!-- Profiles Container -->
+        <div id="profiles-container" class="profiles-container loading">
+            <div class="loading">
+                <div class="loading-spinner">⏳</div>
+                <p>กำลังโหลด...</p>
+            </div>
+        </div>
+    </div>
+
+    <nav class="navbar-bottom">
+        <a href="home-teacher.html" class="nav-item">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-text">หน้าแรก</span>
+        </a>
+        <a href="document-teacher.html" class="nav-item">
+            <span class="nav-icon">📄</span>
+            <span class="nav-text">เอกสาร</span>
+        </a>
+        <a href="post-job.html" class="nav-item">
+            <span class="nav-icon">➕</span>
+            <span class="nav-text">สร้างงาน</span>
+        </a>
+        <a href="student-profiles.html" class="nav-item active">
+            <span class="nav-icon">⭐</span>
+            <span class="nav-text">นักศึกษา</span>
+        </a>
+        <a href="profile-teacher.html" class="nav-item">
+            <span class="nav-icon">👤</span>
+            <span class="nav-text">โปรไฟล์</span>
+        </a>
+    </nav>
+
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzjf5b4vi0MmEKWW7XFJKwQyISx0Xop2y0oR-nPxADLvPuwq7tkgCZS1aKabBP3dm9J/exec";
+
+        let allProfiles = [];
+        let currentUser = null;
+
+        window.addEventListener('load', () => {
+            const currentUserRaw = localStorage.getItem('currentUser');
+            if (!currentUserRaw) {
+                alert('กรุณาเข้าสู่ระบบก่อน');
+                window.location.href = 'login.html';
+            } else {
+                currentUser = JSON.parse(currentUserRaw);
+                loadProfiles();
+            }
+        });
+
+        function loadProfiles() {
+            fetch(`${SCRIPT_URL}?action=getStudentProfiles`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success && data.profiles) {
+                        allProfiles = data.profiles;
+                        const pageInfo = document.getElementById('page-info');
+                        pageInfo.textContent = `พบ ${allProfiles.length} นักศึกษา Premium`;
+                        renderProfiles(allProfiles);
+                    } else {
+                        showEmpty('ไม่มีนักศึกษา Premium');
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    showEmpty('ไม่สามารถโหลดข้อมูลได้');
+                });
+        }
+
+        function filterProfiles() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            
+            if (!searchTerm) {
+                renderProfiles(allProfiles);
+                return;
+            }
+
+            const filtered = allProfiles.filter(profile => {
+                const name = profile.StudentName.toLowerCase();
+                const skills = profile.Skills.toLowerCase();
+                const details = profile.Details.toLowerCase();
+                
+                return name.includes(searchTerm) || skills.includes(searchTerm) || details.includes(searchTerm);
+            });
+
+            if (filtered.length === 0) {
+                showEmpty('ไม่พบผลการค้นหา');
+            } else {
+                const pageInfo = document.getElementById('page-info');
+                pageInfo.textContent = `พบ ${filtered.length} ผลการค้นหา`;
+                renderProfiles(filtered);
+            }
+        }
+
+        function renderProfiles(profiles) {
+            const container = document.getElementById('profiles-container');
+            
+            if (profiles.length === 0) {
+                showEmpty('ไม่มีนักศึกษา Premium');
+                return;
+            }
+
+            container.innerHTML = profiles.map(profile => `
+                <div class="profile-card">
+                    <div class="profile-image">
+                        ${profile.PhotoUrl ? `
+                            <img src="${profile.PhotoUrl}" alt="${profile.StudentName}">
+                        ` : `
+                            <div class="profile-image-placeholder">👨‍🎓</div>
+                        `}
+                    </div>
+
+                    <div class="profile-content">
+                        <div class="profile-header">
+                            <div>
+                                <div class="profile-name">${profile.StudentName}</div>
+                                <div class="profile-phone">
+                                    <a href="tel:${profile.PhoneNumber}">☎️ ${profile.PhoneNumber}</a>
+                                </div>
+                            </div>
+                            <div class="days-remaining">
+                                ⏰ ${profile.DaysRemaining} วัน
+                            </div>
+                        </div>
+
+                        <div class="profile-skills">
+                            <h4>ความสามารถ</h4>
+                            <div class="skills-list">
+                                ${profile.Skills.split(',').map(skill => `
+                                    <span class="skill-tag">${skill.trim()}</span>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <div class="profile-details">
+                            ${profile.Details}
+                        </div>
+
+                        <div class="profile-actions">
+                            <a href="tel:${profile.PhoneNumber}" class="btn-call">
+                                ☎️ โทรติดต่อ
+                            </a>
+                            <a href="https://line.me/R/msg/${profile.PhoneNumber}/?${encodeURIComponent(profile.StudentName + ' - ' + profile.Skills)}" class="btn-message">
+                                💬 ส่งข้อความ
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showEmpty(message) {
+            const container = document.getElementById('profiles-container');
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">🔍</div>
+                    <h3>${message}</h3>
+                    <p>ลองค้นหาด้วยคำอื่น หรือกลับมาดูภายหลัง</p>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

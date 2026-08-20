@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แพ็คเกจพรีเมียม - Actihup</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Prompt', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            font-weight: 800;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .pricing-card {
+            background: white;
+            border-radius: 30px;
+            padding: 40px 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+            text-align: center;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .package-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        .package-name {
+            font-size: 28px;
+            font-weight: 800;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .package-duration {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .price-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 25px 0;
+            color: white;
+        }
+
+        .price {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .price-currency {
+            font-size: 18px;
+        }
+
+        .price-description {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .features {
+            text-align: left;
+            margin: 30px 0;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 15px;
+            color: #333;
+        }
+
+        .feature-icon {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .btn-buy {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .btn-buy:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-buy:active {
+            transform: translateY(-1px);
+        }
+
+        .subscription-status {
+            background: #f0f4ff;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .subscription-status.active {
+            background: #e8f5e9;
+            border-left-color: #4caf50;
+        }
+
+        .subscription-status h3 {
+            color: #333;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .subscription-status p {
+            color: #666;
+            font-size: 13px;
+            margin: 0;
+        }
+
+        .back-link {
+            color: white;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-link a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            transition: opacity 0.3s;
+        }
+
+        .back-link a:hover {
+            opacity: 0.8;
+        }
+
+        .navbar-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+            z-index: 1000;
+            font-family: 'Prompt', sans-serif;
+            box-sizing: border-box;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #555555;
+            font-size: 11px;
+            font-weight: 600;
+            flex: 1;
+            text-align: center;
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 2px;
+        }
+
+        body {
+            padding-bottom: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✨ Actihup Premium</h1>
+            <p>ยกระดับการค้นหางาน โดยแสดงตัวตนของคุณ</p>
+        </div>
+
+        <div id="subscription-info"></div>
+
+        <div class="pricing-card">
+            <div class="package-icon">🦈๋࣭⭑</div>
+            <div class="package-name">Premium 7 วัน</div>
+            <div class="package-duration">7 Days Access</div>
+
+            <div class="price-section">
+                <div>
+                    <span class="price-currency">฿</span><span class="price">10</span>
+                </div>
+                <div class="price-description">สำหรับ 7 วัน</div>
+            </div>
+
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">✓</div>
+                    <span>โพสต์ประกาศความสามารถของคุณ</span>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">✓</div>
+                    <span>แสดงเบอร์ติดต่อให้อาจารย์เห็น</span>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">✓</div>
+                    <span>อาจารย์สามารถติดต่อคุณได้</span>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">✓</div>
+                    <span>ถูกลบโพสต์หลังครบกำหนด</span>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">✓</div>
+                    <span>สามารถเติมต่อได้ตลอดเวลา</span>
+                </div>
+            </div>
+
+            <button class="btn-buy" onclick="buyPackage()">🛒 ซื้อแพ็คเกจนี้</button>
+        </div>
+
+        <div class="back-link">
+            <a href="home-student.html">← กลับไปหน้าหลัก</a>
+        </div>
+    </div>
+
+    <nav class="navbar-bottom">
+        <a href="home-student.html" class="nav-item">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-text">หน้าแรก</span>
+        </a>
+        <a href="job-listing.html" class="nav-item">
+            <span class="nav-icon">💼</span>
+            <span class="nav-text">งาน</span>
+        </a>
+        <a href="pricing-premium.html" class="nav-item">
+            <span class="nav-icon">⭐</span>
+            <span class="nav-text">พรีเมียม</span>
+        </a>
+        <a href="my-posts.html" class="nav-item">
+            <span class="nav-icon">📝</span>
+            <span class="nav-text">โพสต์ของฉัน</span>
+        </a>
+        <a href="profile-student.html" class="nav-item">
+            <span class="nav-icon">👤</span>
+            <span class="nav-text">โปรไฟล์</span>
+        </a>
+    </nav>
+
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzjf5b4vi0MmEKWW7XFJKwQyISx0Xop2y0oR-nPxADLvPuwq7tkgCZS1aKabBP3dm9J/exec";
+
+        let currentUser = null;
+
+        window.addEventListener('load', () => {
+            const currentUserRaw = localStorage.getItem('currentUser');
+            if (!currentUserRaw) {
+                alert('กรุณาเข้าสู่ระบบก่อน');
+                window.location.href = 'login.html';
+            } else {
+                currentUser = JSON.parse(currentUserRaw);
+                checkSubscriptionStatus();
+            }
+        });
+
+        function checkSubscriptionStatus() {
+            fetch(`${SCRIPT_URL}?action=checkSubscription&studentId=${encodeURIComponent(currentUser.ID)}`)
+                .then(res => res.json())
+                .then(data => {
+                    const infoDiv = document.getElementById('subscription-info');
+                    if (data.isPremium && data.subscription) {
+                        const daysRemaining = data.subscription.DaysRemaining;
+                        infoDiv.innerHTML = `
+                            <div class="subscription-status active">
+                                <h3>✓ คุณมีสถานะ Premium</h3>
+                                <p>เหลือเวลาอีก ${daysRemaining} วัน</p>
+                                <p>หมดอายุ: ${new Date(data.subscription.EndDate).toLocaleDateString('th-TH')}</p>
+                            </div>
+                        `;
+                    } else {
+                        infoDiv.innerHTML = `
+                            <div class="subscription-status">
+                                <h3>⚠️ คุณยังไม่เป็น Premium Member</h3>
+                                <p>ซื้อแพ็คเกจเพื่อเริ่มใช้งาน Premium</p>
+                            </div>
+                        `;
+                    }
+                })
+                .catch(err => console.error(err));
+        }
+
+        function buyPackage() {
+            // เปลี่ยนไปหน้า checkout
+            window.location.href = 'checkout-premium.html?packageId=7days-10baht';
+        }
+    </script>
+</body>
+</html>

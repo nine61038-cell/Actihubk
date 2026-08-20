@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ตรวจสอบการชำระเงิน - Admin</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Prompt', 'Tahoma', sans-serif;
+            background-color: #dcedff;
+            margin: 0;
+            padding: 20px;
+            padding-bottom: 100px;
+        }
+        h1 {
+            color: #004085;
+            text-align: center;
+            font-size: 1.6rem;
+        }
+        .payments-feed {
+            max-width: 480px;
+            margin: 20px auto;
+        }
+        .payment-card {
+            background-color: #ffffff;
+            border-radius: 20px;
+            padding: 18px;
+            margin-bottom: 18px;
+            box-shadow: 6px 8px 16px rgba(0, 0, 0, 0.1);
+        }
+        .payment-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 6px;
+        }
+        .payment-slip {
+            width: 100%;
+            max-height: 320px;
+            object-fit: contain;
+            border-radius: 10px;
+            margin: 12px 0;
+            border: 1px solid #ddd;
+            cursor: zoom-in;
+        }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .btn-confirm, .btn-reject {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .btn-confirm { background-color: #2e7d32; color: #fff; }
+        .btn-reject { background-color: #c62828; color: #fff; }
+        .payments-empty { text-align: center; color: #555; margin-top: 40px; }
+        .back-link { display: block; text-align: center; margin-top: 20px; color: #004085; }
+    </style>
+</head>
+<body>
+    <h1>💳 รายการรอตรวจสอบการชำระเงิน</h1>
+    <main id="payments-feed" class="payments-feed"></main>
+    <a href="home-teacher.html" class="back-link">← กลับหน้าหลัก</a>
+ 
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzjf5b4vi0MmEKWW7XFJKwQyISx0Xop2y0oR-nPxADLvPuwq7tkgCZS1aKabBP3dm9J/exec";
+ 
+        // หมายเหตุ: ตอนนี้ใช้บัญชี "อาจารย์" คนไหนก็เข้าหน้านี้ได้ก่อน (ยังไม่มี role admin แยก)
+        // ถ้าต้องการจำกัดเฉพาะแอดมินจริงๆ ให้เช็ค currentUser.ID เทียบกับรหัสแอดมินที่กำหนดไว้ในชีตแทน
+        const currentUserRaw = localStorage.getItem('currentUser');
+        if (!currentUserRaw || JSON.parse(currentUserRaw).Role !== 'teacher') {
+            alert('หน้านี้สำหรับแอดมิน/อาจารย์เท่านั้น');
+            window.location.href = 'login.html';
+        } else {
+            loadPendingPayments();
+        }
+ 
+        function loadPendingPayments() {
+            fetch(`${SCRIPT_URL}?action=getPendingPayments`)
+                .then(res => res.json())
+                .then(data => {
+                    const feed = document.getElementById('payments-feed');
+                    if (!data.success || !data.payments || data.payments.length === 0) {
+                        feed.innerHTML = '<p class="payments-empty">ไม่มีรายการรอตรวจสอบ 🎉</p>';
+                        return;
+                    }
+                    feed.innerHTML = data.payments.map(p => `
+                        <div class="payment-card" data-paymentid="${p.PaymentID}">
+                            <div class="payment-row"><span>นักศึกษา</span><b>${p.StudentName} (${p.StudentID})</b></div>
+                            <div class="payment-row"><span>แพ็คเกจ</span><b>${p.PackageId}</b></div>
+                            <div class="payment-row"><span>จำนวนเงิน</span><b>฿${p.Amount}</b></div>
+                            <img class="payment-slip" src="${p.SlipUrl}" alt="สลิปโอนเงิน" onclick="window.open('${p.SlipUrl}', '_blank')">
+                            <div class="btn-group">
+                                <button class="btn-confirm" onclick="reviewPayment('${p.PaymentID}', 'confirm')">✓ ยืนยัน</button>
+                                <button class="btn-reject" onclick="reviewPayment('${p.PaymentID}', 'reject')">✗ ปฏิเสธ</button>
+                            </div>
+                        </div>
+                    `).join('');
+                })
+                .catch(err => {
+                    console.error(err);
+                    document.getElementById('payments-feed').innerHTML = '<p class="payments-empty">โหลดข้อมูลไม่สำเร็จ</p>';
+                });
+        }
+ 
+        function reviewPayment(paymentId, decision) {
+            const label = decision === 'confirm' ? 'ยืนยันว่าเงินเข้าจริง' : 'ปฏิเสธสลิปนี้';
+            if (!confirm(`${label} สำหรับรายการนี้ใช่ไหม?`)) return;
+ 
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: decision === 'confirm' ? 'confirmPayment' : 'rejectPayment',
+                    paymentId: paymentId
+                })
+            })
+                .then(res => res.json())
+                .then(result => {
+                    if (result.success) {
+                        loadPendingPayments();
+                    } else {
+                        alert('ทำรายการไม่สำเร็จ: ' + result.message);
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('เชื่อมต่อไม่สำเร็จ');
+                });
+        }
+    </script>
+</body>
+</html>
