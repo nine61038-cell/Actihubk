@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration</title>
+ 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Itim&family=Prompt:wght@300;400;700&display=swap" rel="stylesheet">
+ 
+    <style>
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-color: #dcedff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+ 
+        .register-card {
+            background-color: white;
+            border-radius: 24px;
+            padding: 30px 40px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+ 
+        .title {
+            color: #004085;
+            font-size: 28px;
+            margin-top: 0;
+            margin-bottom: 25px;
+            font-weight: 700;
+        }
+ 
+        .form-group {
+             margin-bottom: 20px;
+             text-align: left;
+        }
+ 
+        .form-label {
+            display: block;
+            color: #004085;
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+ 
+        .form-control, .form-select {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 1rem;
+            color: #004085;
+            background-color: white;
+            border: 2px solid #004085;
+            border-radius: 12px;
+            outline: none;
+            box-sizing: border-box;
+            font-family: 'Prompt', sans-serif;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+ 
+        .form-control:focus, .form-select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
+        }
+ 
+        .btn-submit {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #51bb51;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Itim', cursive;
+            font-size: 24px;
+            cursor: pointer;
+            margin-top: 25px;
+            transition: background-color 0.2s;
+        }
+ 
+        .btn-submit:hover {
+            background-color: #43a043;
+        }
+ 
+        .btn-submit:disabled {
+            background-color: #9bcf9b;
+            cursor: not-allowed;
+        }
+ 
+        .back-link {
+            display: inline-block;
+            margin-top: 15px;
+            color: #888;
+            font-size: 14px;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            color: #004085;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+ 
+    <div class="register-card">
+        <h2 class="title">ลงทะเบียนนักศึกษา</h2>
+ 
+        <form id="registerForm">
+ 
+            <div class="form-group">
+                <label for="firstname" class="form-label">ชื่อ:</label>
+                <input type="text" id="firstname" name="firstname" class="form-control" required placeholder="กรอกชื่อของคุณ">
+            </div>
+ 
+            <div class="form-group">
+                <label for="lastname" class="form-label">นามสกุล:</label>
+                <input type="text" id="lastname" name="lastname" class="form-control" required placeholder="กรอกนามสกุล">
+            </div>
+ 
+            <div class="form-group">
+                <label for="studentid" class="form-label">รหัสนักศึกษา:</label>
+                <input type="text" id="studentid" name="studentid" class="form-control" required placeholder="เช่น 65XXXXXXXX">
+            </div>
+ 
+            <div class="form-group">
+                <label for="password" class="form-label">ตั้งรหัสผ่าน</label>
+                <input type="password" id="password" name="password" class="form-control" required>
+            </div>
+ 
+            <div class="form-group">
+                <label for="major" class="form-label">สาขาวิชา:</label>
+                <select id="major" name="major" class="form-select" required>
+                    <option value="" disabled selected hidden>เลือกสาขาวิชา</option>
+                    <option value="สาขาวิชาการบัญชี">สาขาวิชาการบัญชี</option>
+                    <option value="สาขาวิชาการตลาด">สาขาวิชาการตลาด</option>
+                    <option value="สาขาวิชาธุรกิจค้าปลีก">สาขาวิชาธุรกิจค้าปลีก</option>
+                    <option value="สาขาเทคโนโลยีธุรกิจดิจิทัล">สาขาเทคโนโลยีธุรกิจดิจิทัล</option>
+                    <option value="สาขาวิชาเทคโนโลยีสารสนเทศ">สาขาวิชาเทคโนโลยีสารสนเทศ</option>
+                    <option value="สาขาวิชาการท่องเที่ยว">สาขาวิชาการท่องเที่ยว</option>
+                    <option value="สาขาวิชาการโรงแรม">สาขาวิชาการโรงแรม</option>
+                    <option value="สาขาวิชาช่างยนต์">สาขาวิชาช่างยนต์</option>
+                    <option value="สาขาวิชาช่างไฟฟ้ากำลัง">สาขาวิชาช่างไฟฟ้ากำลัง</option>
+                    <option value="สาขาวิชาช่างอิเล็กทรอนิกส์">สาขาวิชาช่างอิเล็กทรอนิกส์</option>
+                    <option value="สาขาวิชาภาษาต่างประเทศ">สาขาวิชาภาษาต่างประเทศ</option>
+                </select>
+            </div>
+ 
+            <button type="submit" class="btn-submit" id="submitBtn">Register</button>
+        </form>
+        
+        <a href="register-choice.html" class="back-link">← ย้อนกลับไปหน้าเลือกประเภท</a>
+    </div>
+    
+    <script>
+        // 🌟 วางลิงก์ Web App URL เดียวกับที่ใช้ใน Code.gs ตรงนี้ (ตัวเดียวกันทั้ง 3 หน้า: register/login)
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzjf5b4vi0MmEKWW7XFJKwQyISx0Xop2y0oR-nPxADLvPuwq7tkgCZS1aKabBP3dm9J/exec";
+ 
+        document.getElementById('registerForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+ 
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'กำลังลงทะเบียน...';
+ 
+            const firstname = document.getElementById('firstname').value.trim();
+            const lastname = document.getElementById('lastname').value.trim();
+            const studentid = document.getElementById('studentid').value.trim();
+            const password = document.getElementById('password').value;
+            const major = document.getElementById('major').value;
+ 
+            const params = new URLSearchParams({
+                action: 'register',
+                role: 'student',
+                username: studentid,
+                password: password,
+                fullName: `${firstname} ${lastname}`,
+                department: major
+            });
+ 
+            fetch(`${SCRIPT_URL}?${params.toString()}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert('🎉 ลงทะเบียนนักศึกษาสำเร็จ');
+                    window.location.href = 'login.html';
+                } else {
+                    alert('❌ ลงทะเบียนไม่สำเร็จ: ' + data.message);
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Register';
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('ไม่สามารถเชื่อมต่อได้โปรดตรวจสอบอินเทอร์เน็ต');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Register';
+            });
+        });
+    </script>
+</body>
+</html>

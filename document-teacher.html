@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คลังเอกสาร - อาจารย์</title>
+    <style>
+        .navbar-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+            z-index: 1000;
+            font-family: 'Prompt', sans-serif;
+            box-sizing: border-box;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #555555;
+            font-size: 11px;
+            font-weight: 600;
+            flex: 1;
+            text-align: center;
+        }
+        .nav-icon { font-size: 20px; margin-bottom: 2px; }
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-color: #dcedff;
+            margin: 0;
+            padding-bottom: 100px;
+        }
+        .nav-logo span {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 30px;
+            font-weight: 800;
+            color: #36c6eb;
+            letter-spacing: 1px;
+        }
+        .posts-feed {
+            padding: 20px;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+        .post-card {
+            background-color: #9fb7bc;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 6px 8px 16px rgba(0, 0, 0, 0.15);
+        }
+        .post-card-title-box {
+            background: #eef4f5;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .post-card-details-box {
+            background: #cdeef1;
+            border-radius: 8px;
+            padding: 12px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .post-card-hours {
+            text-align: center;
+            font-weight: bold;
+            color: #2e2472;
+            margin-bottom: 12px;
+        }
+        .post-card-student {
+            background-color: #2e7d32;
+            color: white;
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .post-card-confirm-btn {
+            display: block;
+            width: 100%;
+            margin-top: 10px;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            background-color: #2e7d32;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .post-card-confirmed-label {
+            margin-top: 10px;
+            text-align: center;
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        .posts-empty { text-align: center; color: #4a4a4a; margin-top: 40px; }
+    </style>
+</head>
+<body>
+     <nav class="navbar">
+        <div class="nav-logo">
+            <span>Actihup</span>
+        </div>
+
+        <main id="posts-feed" class="posts-feed"></main>
+
+        <nav class="navbar-bottom">
+            <a href="home-teacher.html" class="nav-item">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-text">หน้าแรก</span>
+            </a>
+            <a href="document-teacher.html" class="nav-item">
+                <span class="nav-icon">📄</span>
+                <span class="nav-text">เอกสาร</span>
+            </a>
+            <a href="post-job.html" class="nav-item nav-item--post">
+                <span class="nav-icon--post">➕</span>
+            </a>
+            <a href="profile-teacher.html" class="nav-item">
+                <span class="nav-icon">👤</span>
+                <span class="nav-text">โปรไฟล์</span>
+            </a>
+        </nav>
+    </nav>
+
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzjf5b4vi0MmEKWW7XFJKwQyISx0Xop2y0oR-nPxADLvPuwq7tkgCZS1aKabBP3dm9J/exec";
+
+  const currentUserRaw = localStorage.getItem('currentUser');
+  let teacherId;
+
+  if (!currentUserRaw) {
+    alert('กรุณาเข้าสู่ระบบก่อน');
+    window.location.href = 'login.html';
+  } else {
+    teacherId = JSON.parse(currentUserRaw).ID;
+    loadPosts();
+  }
+
+  function loadPosts() {
+    fetch(`${SCRIPT_URL}?action=getMyAcceptedPosts&teacherId=${encodeURIComponent(teacherId)}`)
+      .then(res => res.json())
+      .then(data => {
+        const feed = document.getElementById('posts-feed');
+        if (!data.success || !data.posts || data.posts.length === 0) {
+          feed.innerHTML = '<p class="posts-empty">ยังไม่มีนักศึกษารับงานของคุณ</p>';
+          return;
+        }
+
+        feed.innerHTML = data.posts.map(post => {
+          let studentSection = `<div class="post-card-student">นักศึกษาที่รับงาน: ${post.StudentName} (${post.StudentID})</div>`;
+
+          if (post.Status === 'confirmed') {
+            studentSection += `<div class="post-card-confirmed-label">✔ ยืนยันชั่วโมงแล้ว</div>`;
+          } else {
+            studentSection += `<button type="button" class="post-card-confirm-btn" data-postid="${post.PostID}">✔ ยืนยันชั่วโมง</button>`;
+          }
+
+          return `
+            <div class="post-card">
+              <div class="post-card-title-box">${post.Title}</div>
+              <div class="post-card-details-box">${post.Details}</div>
+              <div class="post-card-hours">จำนวนชั่วโมงที่ให้ : ${post.WorkHours}</div>
+              ${studentSection}
+            </div>
+          `;
+        }).join('');
+
+        document.querySelectorAll('.post-card-confirm-btn').forEach(btn => {
+          btn.addEventListener('click', function () {
+            const postId = this.getAttribute('data-postid');
+            if (!confirm('ยืนยันชั่วโมงให้นักศึกษาคนนี้ใช่ไหม?')) return;
+
+            fetch(SCRIPT_URL, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ action: 'confirmHours', postId: postId, teacherId: teacherId })
+            })
+              .then(res => res.json())
+              .then(result => {
+                if (result.success) {
+                    alert('ยืนยันชั่วโมงสำเร็จ')
+                  loadPosts();
+                } else {
+                  alert(result.message || 'ยืนยันไม่สำเร็จ');
+                }
+              })
+              .catch(err => { console.error(err); alert('ยืนยันไม่สำเร็จ:' + err.message); });
+          });
+        });
+      })
+      .catch(err => {
+        console.error(err);
+        document.getElementById('posts-feed').innerHTML = '<p class="posts-empty">โหลดข้อมูลไม่สำเร็จ</p>';
+      });
+  }
+    </script>
+</body>
+</html>

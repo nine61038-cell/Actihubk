@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actihup</title>
+    <style>
+
+        .navbar-bottom{
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+            z-index: 1000;
+            font-family: 'Prompt', sans-serif;
+            box-sizing: border-box;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #555555;
+            font-size: 11px;
+            font-weight: 600;
+            flex: 1;
+            text-align: center;
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 2px;
+        }
+
+        .nav-item--post {
+            background-color: #51bb51;
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 10px rgba(81, 187, 81, 0.4);
+            transition: transform 0.2s, background-color 0.2s;
+            flex: none;
+        }
+
+        .nav-icon--post:hover {
+            background-color: #43a043;
+            transform: scale(1.08);
+        }
+
+        .nav-item--post {
+            color: white;
+            font-size: 24px;
+            line-height: 1;
+        }
+
+        .nav-item--logout {
+            color: #dc3545;
+        }
+
+        .nav-item--logout .nav-icon {
+            color: #dc3545;
+        }
+
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-color: #dcedff;
+            margin: 0;
+            padding: 20;
+            padding-bottom: 100;
+        }
+
+        .nav-icon.active {
+            color: #3b82f6;
+        }
+
+        .nav-item.active .nav-icon {
+            font-size: 24px;
+        }
+
+        .nav-logo span {
+            font-family: 'Fredoka' , sans-serif;
+            font-size: 30px;
+            font-weight: 800;
+            color: #36c6eb;
+            letter-spacing: 1px;
+        }
+
+        .posts-feed {
+  padding: 20px;
+  padding-bottom: 100px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.post-card {
+  background-color: #9fb7bc;
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 6px 8px 16px rgba(0, 0, 0, 0.15);
+  display: flex;
+  gap: 15px;
+}
+
+.post-card-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.post-card-body {
+  flex: 1;
+}
+
+.post-card-title-box {
+  background: #eef4f5;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.post-card-details-box {
+  background: #cdeef1;
+  border-radius: 8px;
+  padding: 12px;
+  color: #333;
+  margin-bottom: 10px;
+  min-height: 50px;
+}
+
+.post-card-hours {
+  text-align: center;
+  font-weight: bold;
+  color: #2e2472;
+  margin-bottom: 10px;
+}
+
+.post-card-status {
+  text-align: center;
+  font-weight: bold;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.post-card-status.open {
+  background: #d4f8d4;
+  color: #2e7d32;
+}
+
+.post-card-status.taken {
+  background: #ffe0b2;
+  color: #e65100;
+}
+
+.posts-empty {
+  text-align: center;
+  color: #4a4a4a;
+  margin-top: 40px;
+}
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-logo">
+            <span>Actihup</span>
+        </div>
+
+        <main id="posts-feed" class="posts-feed"></main>
+
+        <nav class="navbar-bottom">
+            <a href="home-teacher.html" class="nav-item">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-text">หน้าแรก</span>
+            </a>
+
+            <a href="document-teacher.html" class="nav-item">
+                <span class="nav-icon">📄</span>
+                <span class="nav-text">เอกสาร</span>
+            </a>
+
+            <a href="post-job.html" class="nav-item nav-item--post">
+                <span class="nav-icon--post">➕</span>
+            </a>
+
+            <a href="profile-teacher.html" class="nav-item">
+                <span class="nav-icon">👤</span>
+                <span class="nav-text">โปรไฟล์</span>
+            </a>
+
+            
+        </nav>
+    </nav>
+    
+<script>
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzjf5b4vi0MmEKWW7XFJKwQyISx0Xop2y0oR-nPxADLvPuwq7tkgCZS1aKabBP3dm9J/exec";
+
+  var teacherId;
+
+  const currentUserRaw = localStorage.getItem('currentUser');
+  if (!currentUserRaw) {
+    alert('กรุณาเข้าสู่ระบบก่อน');
+    window.location.href = 'login.html';
+  } else {
+    const currentUser = JSON.parse(currentUserRaw);
+    teacherId = currentUser.ID;
+  }
+
+   function loadPosts() {
+      fetch(`${SCRIPT_URL}?action=getMyPosts&teacherId=${encodeURIComponent(teacherId)}`)
+        .then(res => res.json())
+        .then(data => {
+          const feed = document.getElementById('posts-feed');
+          if (!data.success || !data.posts || data.posts.length === 0) {
+            feed.innerHTML = '<p class="posts-empty">คุณยังไม่มีประกาศงาน กดปุ่ม ➕ เพื่อสร้างประกาศใหม่</p>';
+            return;
+          }
+ 
+          feed.innerHTML = data.posts.map(post => {
+            let statusLabel = 'เปิดรับสมัคร';
+            let statusClass = 'open';
+            if (post.Status === 'taken') { statusLabel = 'มีนักศึกษารับงานแล้ว'; statusClass = 'taken'; }
+            if (post.Status === 'confirmed') { statusLabel = 'ยืนยันชั่วโมงแล้ว'; statusClass = 'confirmed'; }
+ 
+            // ส่วนแสดงนักศึกษา + ปุ่มยืนยัน (โผล่เฉพาะตอน Status = taken)
+            let confirmSection = '';
+            if (post.Status === 'taken' || post.Status === 'confirmed') {
+              confirmSection = `
+                <div class="post-card-student-banner">
+                  นักศึกษาที่รับงาน: ${post.StudentName} (${post.StudentID})
+                </div>
+              `;
+            }
+ 
+            return `
+              <div class="post-card">
+                <div class="post-card-avatar">👤</div>
+                <div class="post-card-body">
+                  <div class="post-card-title-box">${post.Title}</div>
+                  <div class="post-card-details-box">${post.Details}</div>
+                  <div class="post-card-hours">จำนวนชั่วโมงที่ให้ : ${post.WorkHours}</div>
+                  <div class="post-card-status ${statusClass}">${statusLabel}</div>
+                  ${confirmSection}
+                </div>
+              </div>
+            `;
+          }).join('');
+        })
+        .catch(err => {
+          console.error(err);
+          document.getElementById('posts-feed').innerHTML = '<p class="posts-empty">โหลดข้อมูลไม่สำเร็จ</p>';
+        });
+    }
+ 
+    loadPosts();
+</script>
+
+</body>
+</html>

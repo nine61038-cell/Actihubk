@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+ 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Itim&display=swap" rel="stylesheet">
+ 
+    <style>
+        body {
+            font-family: 'Itim', sans-serif;
+            background-color: #bee1ff;
+            margin: 0;
+            padding: 50px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+ 
+        h1 {
+            font-family: 'Fredoka', sans-serif;
+            color: #155294;
+            font-size: 40px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+ 
+        form {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 360px;
+            box-sizing: border-box;
+        }
+ 
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #155294;
+            font-weight:bold;
+            font-size: 16px;
+        }
+ 
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border: 2px solid #155294;
+            border-radius: 12px;
+            font-family: 'Itim', sans-serif;
+            font-size: 16px;
+            outline: none;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+ 
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            border-color: #155294;
+            box-shadow: 0 0 8px rgba(21, 82, 148, 0.2);
+        }
+ 
+        input[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            background-color: #51bb51;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Itim', sans-serif;
+            font-size: 22px;
+            cursor: pointer;
+            transition: background-color 0.2s ;
+            margin-top: 10px;
+        }
+ 
+        input[type="submit"]:hover {
+            background-color: #3e9e3e;
+        }
+ 
+        input[type="submit"]:disabled {
+            background-color: #9bcf9b;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+ 
+    <h1>เข้าสู่ระบบ</h1>
+ 
+    <form id="loginForm">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" placeholder="กรอกรหัสนักศึกษา / รหัสอาจารย์"><br><br>
+ 
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" placeholder="กรอกรหัสผ่าน"><br><br>
+ 
+        <input type="submit" id="submitBtn" value="Login">
+    </form>
+ 
+    <script>
+        // 🌟 วางลิงก์ Web App URL เดียวกับที่ใช้ใน Code.gs ตรงนี้ (ตัวเดียวกันทั้ง 3 หน้า: register/login)
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzjf5b4vi0MmEKWW7XFJKwQyISx0Xop2y0oR-nPxADLvPuwq7tkgCZS1aKabBP3dm9J/exec";
+ 
+        document.getElementById('loginForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+ 
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.value = 'กำลังเข้าสู่ระบบ...';
+ 
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+ 
+            const params = new URLSearchParams({
+                action: 'login',
+                username: username,
+                password: password
+            });
+ 
+            fetch(`${SCRIPT_URL}?${params.toString()}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    // เก็บข้อมูลผู้ใช้ที่ล็อกอินไว้ใช้ในหน้าอื่น (home / profile)
+                    localStorage.setItem('currentUser', JSON.stringify(data.user));
+ 
+                    alert(`🔑 เข้าสู่ระบบสำเร็จ! ยินดีต้อนรับคุณ ${data.user.FullName}`);
+ 
+                    // ไปหน้าแรกตามบทบาท อาจารย์ / นักศึกษา
+                    if (data.user.Role === 'teacher') {
+                        window.location.href = 'home-teacher.html';
+                    } else if (data.user.Role === 'student') {
+                        window.location.href = 'home-student.html';
+                    } else {
+                        window.location.href = 'index.html';
+                    }
+                } else {
+                    alert('❌ ' + data.message);
+                    submitBtn.disabled = false;
+                    submitBtn.value = 'Login';
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('ระบบตรวจสอบเกิดข้อผิดพลาดกะทันหันค่ะ');
+                submitBtn.disabled = false;
+                submitBtn.value = 'Login';
+            });
+        });
+    </script>
+</body>
+</html>

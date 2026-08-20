@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Student</title>
+    <style>
+        .navbar-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+            z-index: 1000;
+            font-family: 'Prompt', sans-serif;
+            box-sizing: border-box;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #555555;
+            font-size: 11px;
+            font-weight: 600;
+            flex: 1;
+            text-align: center;
+        }
+        .nav-icon { font-size: 20px; margin-bottom: 2px; }
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-color: #dcedff;
+            margin: 0;
+            padding-bottom: 100px;
+        }
+        .nav-logo span {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 30px;
+            font-weight: 800;
+            color: #36c6eb;
+            letter-spacing: 1px;
+            text-align: center;
+            display: block;
+            padding: 15px 0 5px 0;
+        }
+
+        .posts-feed {
+            padding: 20px;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+        .post-card {
+            background-color: #b9c7ca;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 6px 8px 16px rgba(0, 0, 0, 0.15);
+            display: flex;
+            gap: 15px;
+            flex-direction: column;
+            align-items: center;
+        }
+        .post-card-top { display: flex; gap: 15px; width: 100%; }
+        .post-card-avatar {
+            width: 50px; height: 50px; border-radius: 50%;
+            background: #ffffff; display: flex; align-items: center;
+            justify-content: center; font-size: 24px; flex-shrink: 0;
+        }
+        .post-card-body { flex: 1; }
+        .post-card-title-box {
+            background: #ffffff; border: 2px solid #333;
+            border-radius: 6px; padding: 8px 12px;
+            font-weight: bold; color: #333; margin-bottom: 10px;
+        }
+        .post-card-details-box {
+            background: #cdeef1; border-radius: 8px; padding: 12px;
+            color: #333; margin-bottom: 10px; min-height: 40px; width: 100%;
+            box-sizing: border-box;
+        }
+        .post-card-hours { text-align: center; font-weight: bold; color: #333; margin-bottom: 12px; }
+        .accept-btn {
+            background-color: #22c422; color: white; border: none;
+            border-radius: 10px; padding: 14px; width: 100%;
+            font-size: 1.3rem; font-weight: bold; cursor: pointer;
+        }
+        .accept-btn:hover { background-color: #1ba81b; }
+        .posts-empty { text-align: center; color: #4a4a4a; margin-top: 40px; }
+
+        /* สไตล์สำหรับปุ่ม AI Matchmaking */
+        .ai-match-btn {
+            position: fixed;
+            bottom: 85px;
+            right: 20px;
+            background: linear-gradient(135deg, #007bff 0%, #00c6ff 100%);
+            color: #ffffff;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: bold;
+            box-shadow: 0px 6px 16px rgba(0, 123, 255, 0.35);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+        .ai-match-btn:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0px 8px 20px rgba(0, 123, 255, 0.5);
+        }
+        .ai-match-btn:active {
+            transform: translateY(0) scale(0.98);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="nav-logo">
+        <span>Actihub</span>
+    </div>
+
+    <main id="posts-feed" class="posts-feed"></main>
+
+    <!-- ปุ่ม AI Floating -->
+    <button class="ai-match-btn" onclick="runAIMatching()">
+        <span style="font-size: 18px;">✨</span>
+        <span id="ai-btn-text">ให้ AI ค้นหางานตรงสาย</span>
+    </button>
+
+    <nav class="navbar-bottom">
+        <a href="home-student.html" class="nav-item">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-text">หน้าแรก</span>
+        </a>
+
+        <a href="document-student.html" class="nav-item">
+            <span class="nav-icon">📄</span>
+            <span class="nav-text">เอกสาร</span>
+        </a>
+
+        <a href="profile-student.html" class="nav-item">
+            <span class="nav-icon">👤</span>
+            <span class="nav-text">โปรไฟล์</span>
+        </a>
+    </nav>
+    
+    <script src="config.js"></script>
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzjf5b4vi0MmEKWW7XFJKwQyISx0Xop2y0oR-nPxADLvPuwq7tkgCZS1aKabBP3dm9J/exec";
+        const GEMINI_API_KEY = API_KEY; 
+        let isFiltered = false;
+
+        const currentUserRaw = localStorage.getItem('currentUser');
+        if (!currentUserRaw) {
+            alert('กรุณาเข้าสู่ระบบก่อน');
+            window.location.href = 'login.html';
+        } else {
+            fetch(`${SCRIPT_URL}?action=getOpenPosts`)
+                .then(res => res.json())
+                .then(data => {
+                    const feed = document.getElementById('posts-feed');
+                    if (!data.success || !data.posts || data.posts.length === 0) {
+                        feed.innerHTML = '<p class="posts-empty">ยังไม่มีประกาศงานเปิดรับสมัคร</p>';
+                        return;
+                    }
+                    feed.innerHTML = data.posts.map(post => `
+                        <div class="post-card" id="job-${post.PostID}">
+                            <div class="post-card-top">
+                                <div class="post-card-avatar">👤</div>
+                                <div class="post-card-body">
+                                    <div class="post-card-title-box">${post.Title}</div>
+                                    <div style="font-size: 0.85rem; color: #333; margin-bottom: 8px; text-align: center;">
+                                        โพสต์โดย: ${post.TeacherName}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="post-card-details-box">${post.Details}</div>
+                            <div class="post-card-hours">จำนวนชั่วโมงที่ให้ : ${post.WorkHours}</div>
+                            <button class="accept-btn" data-postid="${post.PostID}">✓</button>
+                        </div>
+                    `).join('');
+
+                    document.querySelectorAll('.accept-btn').forEach(btn => {
+                        btn.addEventListener('click', function () {
+                            const postId = this.dataset.postid;
+                            const studentId = JSON.parse(localStorage.getItem('currentUser')).ID;
+
+                            fetch(`${SCRIPT_URL}?action=acceptPost&postId=${encodeURIComponent(postId)}&studentId=${encodeURIComponent(studentId)}`)
+                                .then(res => res.json())
+                                .then(result => {
+                                    if (result.success) {
+                                        alert('รับงานสำเร็จ ไปดูได้ที่หน้าคลังเอกสาร');
+                                        this.closest('.post-card').remove();
+                                    } else {
+                                        alert('เกิดข้อผิดพลาด: ' + result.message);
+                                    }
+                                })
+                                .catch(err => {
+                                    console.error(err);
+                                    alert('เชื่อมต่อไม่สำเร็จ');
+                                });
+                        });
+                    });
+                })
+                .catch(err => {
+                    console.error(err);
+                    document.getElementById('posts-feed').innerHTML = '<p class="posts-empty">โหลดข้อมูลไม่สำเร็จ</p>';
+                });
+        }
+
+        // ฟังก์ชันสั่งงาน AI Matchmaking
+        async function runAIMatching() {
+            const btnText = document.getElementById('ai-btn-text');
+            const btn = document.querySelector('.ai-match-btn');
+
+            // ถ้ากรองอยู่แล้ว ให้กดอีกครั้งเพื่อแสดงงานทั้งหมด
+            if (isFiltered) {
+                showAllJobs();
+                btnText.innerText = "ให้ AI ค้นหางานตรงสาย";
+                isFiltered = false;
+                return;
+            }
+
+            btnText.innerText = "AI กำลังวิเคราะห์...";
+            btn.disabled = true;
+
+            const userObj = JSON.parse(localStorage.getItem('currentUser')) || {};
+            const studentDept = userObj.Department || "วิทยาการคอมพิวเตอร์"; 
+
+            const jobCards = document.querySelectorAll('.post-card');
+            const currentJobs = Array.from(jobCards).map(card => ({
+                id: card.id,
+                title: card.querySelector('.post-card-title-box')?.innerText || "",
+                desc: card.querySelector('.post-card-details-box')?.innerText || ""
+            }));
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: `คุณคือระบบ AI Matchmaking ทำหน้าที่คัดเลือกงานที่เหมาะสมกับสาขาเรียน
+                                สาขาเรียนนักศึกษา: "${studentDept}"
+                                รายการงานทั้งหมด: ${JSON.stringify(currentJobs)}
+                                โปรดตอบกลับเป็น JSON รูปแบบนี้เท่านั้น ห้ามใส่ markdown: {"matched_ids": ["job-1"]}`
+                            }]
+                        }]
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.candidates && data.candidates[0]) {
+                    let cleanText = data.candidates[0].content.parts[0].text.replace(/```json|```/g, '').trim();
+                    const result = JSON.parse(cleanText);
+                    filterJobsOnUI(result.matched_ids);
+                } else {
+                    throw new Error("Invalid API Response");
+                }
+
+            } catch (error) {
+                console.warn("สลับไปใช้ระบบสำรอง (Fallback Mode):", error);
+                const fallbackIds = Array.from(jobCards).slice(0, 2).map(c => c.id);
+                filterJobsOnUI(fallbackIds);
+            } finally {
+                btnText.innerText = "แสดงงานทั้งหมด";
+                btn.disabled = false;
+                isFiltered = true;
+            }
+        }
+
+        // ฟังก์ชันซ่อน/แสดงการ์ด
+        function filterJobsOnUI(matchedIds) {
+            const allJobCards = document.querySelectorAll('.post-card'); 
+
+            allJobCards.forEach(card => {
+                if (matchedIds.includes(card.id)) {
+                    card.style.display = "flex";
+                    if (!card.querySelector('.ai-badge')) {
+                        const badge = document.createElement('div');
+                        badge.className = 'ai-badge';
+                        badge.style.cssText = 'background:#e6f2ff; color:#007bff; padding:4px 10px; border-radius:12px; font-size:12px; font-weight:bold; width:fit-content; align-self:flex-start;';
+                        badge.innerHTML = '✨ AI Recommended';
+                        card.prepend(badge);
+                    }
+                } else {
+                    card.style.display = "none";
+                }
+            });
+        }
+
+        function showAllJobs() {
+            const allJobCards = document.querySelectorAll('.post-card');
+            allJobCards.forEach(card => card.style.display = "flex");
+        }
+    </script>
+</body>
+</html>
