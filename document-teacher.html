@@ -86,7 +86,7 @@
             text-align: center;
             font-weight: bold;
         }
-
+ 
         .post-card-confirm-btn {
             display: block;
             width: 100%;
@@ -106,7 +106,7 @@
             color: #2e7d32;
             font-weight: bold;
         }
-
+ 
         .posts-empty { text-align: center; color: #4a4a4a; margin-top: 40px; }
     </style>
 </head>
@@ -115,9 +115,9 @@
         <div class="nav-logo">
             <span>Actihup</span>
         </div>
-
+ 
         <main id="posts-feed" class="posts-feed"></main>
-
+ 
         <nav class="navbar-bottom">
             <a href="home-teacher.html" class="nav-item">
                 <span class="nav-icon">🏠</span>
@@ -136,13 +136,13 @@
             </a>
         </nav>
     </nav>
-
+ 
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzjf5b4vi0MmEKWW7XFJKwQyISx0Xop2y0oR-nPxADLvPuwq7tkgCZS1aKabBP3dm9J/exec";
-
+ 
   const currentUserRaw = localStorage.getItem('currentUser');
   let teacherId;
-
+ 
   if (!currentUserRaw) {
     alert('กรุณาเข้าสู่ระบบก่อน');
     window.location.href = 'login.html';
@@ -150,7 +150,7 @@
     teacherId = JSON.parse(currentUserRaw).ID;
     loadPosts();
   }
-
+ 
   function loadPosts() {
     fetch(`${SCRIPT_URL}?action=getMyAcceptedPosts&teacherId=${encodeURIComponent(teacherId)}`)
       .then(res => res.json())
@@ -160,16 +160,16 @@
           feed.innerHTML = '<p class="posts-empty">ยังไม่มีนักศึกษารับงานของคุณ</p>';
           return;
         }
-
+ 
         feed.innerHTML = data.posts.map(post => {
           let studentSection = `<div class="post-card-student">นักศึกษาที่รับงาน: ${post.StudentName} (${post.StudentID})</div>`;
-
+ 
           if (post.Status === 'confirmed') {
             studentSection += `<div class="post-card-confirmed-label">✔ ยืนยันชั่วโมงแล้ว</div>`;
           } else {
             studentSection += `<button type="button" class="post-card-confirm-btn" data-postid="${post.PostID}">✔ ยืนยันชั่วโมง</button>`;
           }
-
+ 
           return `
             <div class="post-card">
               <div class="post-card-title-box">${post.Title}</div>
@@ -179,15 +179,14 @@
             </div>
           `;
         }).join('');
-
+ 
         document.querySelectorAll('.post-card-confirm-btn').forEach(btn => {
           btn.addEventListener('click', function () {
             const postId = this.getAttribute('data-postid');
             if (!confirm('ยืนยันชั่วโมงให้นักศึกษาคนนี้ใช่ไหม?')) return;
-
+ 
             fetch(SCRIPT_URL, {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ action: 'confirmHours', postId: postId, teacherId: teacherId })
             })
               .then(res => res.json())
